@@ -57,5 +57,5 @@ def create_keyboard_with_buttons(chat_id, title, buttons):
 		keyboard.add(button)
 	bot.send_message(chat_id, title, reply_markup=keyboard)
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
 	bot.polling(none_stop=True)
