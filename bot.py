@@ -3,20 +3,20 @@ import config
 import telebot
 from telebot import types
 
-constant_choose_wine = u'Выбрать вино'
-command_choose_wine = u'/wine'
+constant_choose_wine = 'Выбрать вино'
+command_choose_wine = '/wine'
 
-CHW_taste_Bitter = u'Горький'
-CHW_taste_Sweet = u'Сладкий'
-CHW_taste_Sour = u'Кислый'
+CHW_taste_Bitter = 'Горький'
+CHW_taste_Sweet = 'Сладкий'
+CHW_taste_Sour = 'Кислый'
 
-CHW_country_Spain = u'Испания'
-CHW_country_Italy = u'Италия'
-CHW_country_France = u'Франция'
+CHW_country_Spain = 'Испания'
+CHW_country_Italy = 'Италия'
+CHW_country_France = 'Франция'
 
-CHW_wine_sparkling = u'Игристое'
-CHW_wine_red = u'Красное'
-CHW_wine_white = u'Белое'
+CHW_wine_sparkling = 'Игристое'
+CHW_wine_red = 'Красное'
+CHW_wine_white = 'Белое'
 
 variants_of_taste = [CHW_taste_Bitter, CHW_taste_Sweet, CHW_taste_Sour]
 variants_of_country = [CHW_country_Spain, CHW_country_Italy, CHW_country_France]
