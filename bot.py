@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import config
 import telebot
 from telebot import types
@@ -24,16 +23,16 @@ variants_of_type = [CHW_wine_sparkling, CHW_wine_red, CHW_wine_white]
 
 bot = telebot.TeleBot(config.token)
 
-@bot.message_handler(commands=[u'start', u'help'])
+@bot.message_handler(commands=['start', 'help'])
 def default_message(message): 
 	keyboard = types.ReplyKeyboardMarkup()
 	button = types.KeyboardButton(constant_choose_wine)
 	keyboard.add(button)
-	bot.send_message(message.chat.id, u'Мы подберем самое подходящее вино специально для вас!', reply_markup=keyboard)
+	bot.send_message(message.chat.id, "Мы подберем самое подходящее вино специально для вас!", reply_markup=keyboard)
 
 @bot.message_handler(func=lambda message: message.text == constant_choose_wine or message.text == command_choose_wine)
 def start_poll(message):
-	create_keyboard_with_buttons(message.chat.id, u'Выберите цвет: ', variants_of_type)
+	create_keyboard_with_buttons(message.chat.id, "Выберите цвет: ", variants_of_type)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -41,14 +40,14 @@ def callback_inline(call):
     # Если сообщение из чата с ботом
 	if call.message:
 		if call.data in variants_of_type:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+' u'+call.data)
-			create_keyboard_with_buttons(call.message.chat.id, u'Выберите страну: ', variants_of_country)
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
+			create_keyboard_with_buttons(call.message.chat.id, "Выберите страну: ", variants_of_country)
 		elif call.data in variants_of_country:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+' u'+call.data)
-			create_keyboard_with_buttons(call.message.chat.id, u'Выберите вкус: ', variants_of_taste)
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
+			create_keyboard_with_buttons(call.message.chat.id, "Выберите вкус: ", variants_of_taste)
 		elif call.data in variants_of_taste:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+' u'+call.data)
-			bot.send_message(call.message.chat.id, u'Вам подойдет: ...')
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
+			bot.send_message(call.message.chat.id, "Вам подойдет: ...")
 
 def create_keyboard_with_buttons(chat_id, title, buttons):
 	keyboard = types.InlineKeyboardMarkup()
