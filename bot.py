@@ -1,8 +1,10 @@
 import config
 import telebot
+import time
+import urllib
 from telebot import types
 
-constant_choose_wine = 'Выбрать вино'
+constant_choose_wine = 'Подбор подходящей бутылки вина.'
 command_choose_wine = '/wine'
 
 CHW_taste_Bitter = 'Горький'
@@ -23,6 +25,11 @@ variants_of_type = [CHW_wine_sparkling, CHW_wine_red, CHW_wine_white]
 
 bot = telebot.TeleBot(config.token)
 
+url = 'http://www.winebutik.net/assets/images/etiketke/1/50.png'
+f = open('out.jpg','wb')
+f.write(urllib.request.urlopen(url).read())
+f.close()
+
 @bot.message_handler(commands=['start', 'help'])
 def default_message(message): 
 	keyboard = types.ReplyKeyboardMarkup()
@@ -32,37 +39,44 @@ def default_message(message):
 
 @bot.message_handler(func=lambda message: message.text == constant_choose_wine or message.text == command_choose_wine)
 def start_poll(message):
-	create_keyboard_with_buttons(message.chat.id, "Выберите цвет: ", variants_of_type)
-
+	mess = bot.send_message(message.chat.id, "Выбираем ...")
+	update_message_with_message_title_buttons(mess,"Выберите цвет:",variants_of_type,"")
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     # Если сообщение из чата с ботом
 	if call.message:
 		if call.data in variants_of_type:
-			keyboard = types.InlineKeyboardMarkup()
-			for i in variants_of_country:
-				button = types.InlineKeyboardButton(text=i, callback_data=i)
-				keyboard.add(button)
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data, reply_markup=keyboard)
+			update_message_with_message_title_buttons(call.message,"Выберите страну:",variants_of_country,call.data)
 			
 		elif call.data in variants_of_country:
-			keyboard = types.InlineKeyboardMarkup()
-			for i in variants_of_taste:
-				button = types.InlineKeyboardButton(text=i, callback_data=i)
-				keyboard.add(button)
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data, reply_markup=keyboard)
+			update_message_with_message_title_buttons(call.message,"Выберите вкус:",variants_of_taste,call.data)
 			
 		elif call.data in variants_of_taste:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data+"\nВам подойдет: ...")
-			
+			new_message = update_message_with_message_title_buttons(call.message,"Мы рекомендуем:",[],call.data)
+			calculate_best_coincidence_wine(new_message)
 
-def create_keyboard_with_buttons(chat_id, title, buttons):
+def create_keyboard_with_buttons(buttons):
 	keyboard = types.InlineKeyboardMarkup()
 	for i in buttons:
 		button = types.InlineKeyboardButton(text=i, callback_data=i)
 		keyboard.add(button)
-	bot.send_message(chat_id, title, reply_markup=keyboard)
+	return keyboard
+
+def update_message_with_message_title_buttons(message, title, buttons, calldata):
+	keyboard = create_keyboard_with_buttons(buttons)
+	return bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id, text=message.text+" "+calldata+"\n"+title, reply_markup=keyboard)
+
+def calculate_best_coincidence_wine(message):
+	wine = '«Shadow’s Run» из винограда Шираз и Каберне Совиньон'
+	bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id, text=message.text+" "+wine)
+	send_photo_after_message(message)
+
+def send_photo_after_message(message):
+    bot.send_chat_action(message.chat.id, 'upload_photo')
+    img = open('out.jpg', 'rb')
+    bot.send_photo(message.chat.id, img)
+    img.close()
 
 if __name__ == '__main__':
 	bot.polling(none_stop=True)
