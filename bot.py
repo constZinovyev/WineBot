@@ -40,14 +40,22 @@ def callback_inline(call):
     # Если сообщение из чата с ботом
 	if call.message:
 		if call.data in variants_of_type:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
-			create_keyboard_with_buttons(call.message.chat.id, "Выберите страну: ", variants_of_country)
+			keyboard = types.InlineKeyboardMarkup()
+			for i in variants_of_country:
+				button = types.InlineKeyboardButton(text=i, callback_data=i)
+				keyboard.add(button)
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data, reply_markup=keyboard)
+			
 		elif call.data in variants_of_country:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
-			create_keyboard_with_buttons(call.message.chat.id, "Выберите вкус: ", variants_of_taste)
+			keyboard = types.InlineKeyboardMarkup()
+			for i in variants_of_taste:
+				button = types.InlineKeyboardButton(text=i, callback_data=i)
+				keyboard.add(button)
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data, reply_markup=keyboard)
+			
 		elif call.data in variants_of_taste:
-			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data)
-			bot.send_message(call.message.chat.id, "Вам подойдет: ...")
+			bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=call.message.text+" "+call.data+"\nВам подойдет: ...")
+			
 
 def create_keyboard_with_buttons(chat_id, title, buttons):
 	keyboard = types.InlineKeyboardMarkup()
